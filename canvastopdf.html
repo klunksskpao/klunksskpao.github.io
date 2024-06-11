@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div id="canvas" style="width: 100%; height: 100%; background-color: lightgray;">
+        <!-- Your content here -->
+        <h1>Hello World</h1>
+    </div>
+    <button id="download">Download as PDF</button>
+    <img id="imgRes" style="display:none;" />
+
+    <script>
+        $(document).ready(function() {
+            $('#download').click(function() {
+                html2canvas(document.querySelector("#canvas")).then(canvas => {
+                    var imgData = canvas.toDataURL('image/png');
+                    $("#imgRes").attr("src", imgData).show(); // Show image result if needed
+                    var { jsPDF } = window.jspdf;
+                    var doc = new jsPDF('p', 'mm');
+                    doc.addImage(imgData, 'PNG', 10, 10);
+                    doc.save('sample-file.pdf');
+                }).catch(function(error) {
+                    console.error('Error generating PDF:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
