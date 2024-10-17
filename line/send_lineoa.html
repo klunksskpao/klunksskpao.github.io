@@ -1,0 +1,35 @@
+var token = 'xxx'; //Channel access token
+
+ var userId = 'xxx'; //UserId
+
+//ทดสอบส่ง LineOA
+function test(){
+  sendLineMessage('ทดสอบตั้งทริกเกอร์ LineOA')
+}
+
+//ส่ง Line
+function sendLineMessage(message) {
+  var url = 'https://api.line.me/v2/bot/message/push';
+  
+  var payload = {
+    to: userId, // แทนที่ด้วย User ID ที่ต้องการส่งข้อความไป
+    messages: [
+      {
+        type: 'text',
+        text: message
+      }
+    ]
+  };
+
+  var options = {
+    'method': 'post',
+    'headers': {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json'
+    },
+    'payload': JSON.stringify(payload)
+  };
+
+  UrlFetchApp.fetch(url, options);
+}
+  
