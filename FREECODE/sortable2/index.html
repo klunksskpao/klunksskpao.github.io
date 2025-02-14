@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Div Table</title>
+    <style>
+        .table-container {
+            font-family: 'Arial', sans-serif;
+            margin: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            background: linear-gradient(145deg, #6b48ff, #00a8ff);
+            color: white;
+            padding: 1rem;
+            font-weight: bold;
+        }
+
+        .table-row {
+            display: flex;
+            background: white;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .table-row:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: #f8f9ff;
+            cursor: pointer;
+        }
+
+        .col {
+            flex: 1;
+            padding: 0 1rem;
+            min-width: 150px;
+        }
+
+        .sortable {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .sortable:hover {
+            transform: scale(1.05);
+        }
+
+        .sort-arrow {
+            margin-left: 5px;
+            font-size: 0.8em;
+        }
+
+        @media (max-width: 768px) {
+            .table-container {
+                margin: 1rem;
+            }
+            
+            .col {
+                padding: 0 0.5rem;
+                min-width: 100px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <div class="table-header">
+            <div class="col sortable" data-column="name">Name ▼</div>
+            <div class="col sortable" data-column="age">Age ▲</div>
+            <div class="col sortable" data-column="city">City ▼</div>
+            <div class="col sortable" data-column="score">Score ▲</div>
+        </div>
+        <div id="table-body">
+            <!-- Rows will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const tableData = [
+            { name: "Alice Smith", age: 28, city: "New York", score: 95 },
+            { name: "Bob Johnson", age: 34, city: "London", score: 88 },
+            { name: "Charlie Brown", age: 22, city: "Paris", score: 92 },
+            { name: "Diana Miller", age: 29, city: "Tokyo", score: 85 },
+            { name: "Ethan Wilson", age: 31, city: "Sydney", score: 90 }
+        ];
+
+        // Initial render
+        renderTable(tableData);
+
+        // Sorting functionality
+        document.querySelectorAll('.sortable').forEach(header => {
+            header.addEventListener('click', () => {
+                const column = header.dataset.column;
+                const isAsc = header.textContent.includes('▲');
+                const direction = isAsc ? -1 : 1;
+                
+                // Sort data
+                const sortedData = [...tableData].sort((a, b) => {
+                    if (a[column] < b[column]) return -1 * direction;
+                    if (a[column] > b[column]) return 1 * direction;
+                    return 0;
+                });
+
+                // Update arrows
+                document.querySelectorAll('.sortable').forEach(h => {
+                    h.innerHTML = h.dataset.column + (h === header ? 
+                        (direction === 1 ? ' ▲' : ' ▼') : '');
+                });
+
+                // Re-render table
+                renderTable(sortedData);
+            });
+        });
+
+        function renderTable(data) {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            
+            data.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'table-row';
+                row.innerHTML = `
+                    <div class="col">${item.name}</div>
+                    <div class="col">${item.age}</div>
+                    <div class="col">${item.city}</div>
+                    <div class="col">${item.score}</div>
+                `;
+                
+                // Add hover effect
+                row.addEventListener('mouseenter', () => {
+                    row.style.transform = 'translateX(5px)';
+                });
+                
+                row.addEventListener('mouseleave', () => {
+                    row.style.transform = '';
+                });
+
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
